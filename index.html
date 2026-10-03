@@ -193,18 +193,28 @@
   }
   @keyframes pop{ from{ opacity:0; transform:translateY(8px) scale(.98);} to{opacity:1; transform:none;} }
   .outcome-banner p{ margin:0; font-size:17.5px; font-weight:500; line-height:1.55; }
-  .outcome-banner p.settle-pop{ animation: pop .35s ease both; }
   .deltas{ display:flex; flex-wrap:wrap; gap:8px; justify-content:center; }
   .delta{
     display:flex; align-items:center; gap:5px; border-radius:999px; padding:7px 12px; font-size:13px; font-weight:700;
     font-variant-numeric:tabular-nums; animation:pop .4s ease both;
     background:var(--surface-alt); border:1px solid var(--border); color:var(--text);
-    transition: opacity .3s ease, transform .3s ease;
   }
-  .deltas.revealing .delta{ opacity:0; transform:translateY(6px); }
-  .deltas .delta:nth-child(2){ transition-delay:.07s; }
-  .deltas .delta:nth-child(3){ transition-delay:.14s; }
   .delta svg{ width:12px; height:12px; color:var(--text-muted); flex-shrink:0; }
+
+  .gauge-card{ text-align:center; }
+  .gauge-track{
+    position:relative; height:14px; border-radius:999px; margin:18px 0 10px;
+    background:linear-gradient(90deg, #E24B5B, #E2C14B 50%, #3FB37F);
+  }
+  .gauge-needle{
+    position:absolute; top:-5px; width:4px; height:24px; border-radius:2px;
+    background:var(--text); box-shadow:0 0 0 3px var(--surface);
+    left:50%; transform:translateX(-50%);
+    transition:left .22s cubic-bezier(.3,0,.2,1);
+  }
+  .gauge-labels{ display:flex; justify-content:space-between; font-size:12.5px; color:var(--text-muted); font-weight:700; }
+  .gauge-likes{ font-family:"Rubik"; font-size:34px; font-weight:700; margin:14px 0 2px; font-variant-numeric:tabular-nums; }
+  .gauge-likes-label{ font-size:12.5px; color:var(--text-muted); font-weight:700; text-transform:uppercase; letter-spacing:.03em; }
 
   .backdrop{
     position:absolute; inset:0; background:rgba(10,6,10,.5);
@@ -307,7 +317,7 @@
         { label:"לבקש תשלום קטן במקום המוצר", outcomes:[ out("הם מכבדים את הבקשה ומשלמים לך משהו.",60,50,10), out("הם מסרבים ונעלמים.",0,0,-5) ] },
         { label:"לסרב, זה עוד לא שווה את הזמן שלך", outcomes:[ out("את מתמקדת בתוכן שלך במקום — וזה משתלם.",300,0,5), out("כלום לא באמת משתנה השבוע.",0,0,0) ] }
       ]},
-      { prompt:"הגעת לאבן דרך קטנה בעוקבים! האפליקציה מציעה לקדם את פוסט החגיגה שלך תמורת כמה שקלים. את מקדמת אותו?", options:[
+      { prompt:"הגעת לאבן דרך קטנה בעוקבים! האפליקציה מציעה לקדם את פוסט החגיגה שלך תמורת כמה שקלים. את מקדמת אותו?", gaugeReveal:true, options:[
         { label:"לקדם את הפוסט", outcomes:[ out("הוא מגיע לאנשים חדשים שנשארים לעקוב.",500,-20,5), out("הוא בקושי זז.",40,-20,-5) ] },
         { label:"לא לשלם, לתת לזה לצמוח בטבעיות", outcomes:[ out("זה צובר תאוצה לאט לאט — מרגיש הרבה יותר אמיתי.",240,0,10), out("כמעט אף אחד לא רואה את זה בלי הקידום.",20,0,0) ] },
         { label:"לבקש מהעוקבים שלך לשתף בעצמם", outcomes:[ out("הקהילה שלך מגיעה בגדול.",400,0,15), out("כמה אנשים משתפים, תוצאה צנועה.",120,0,5) ] }
@@ -334,7 +344,7 @@
         { label:"לנהל משא ומתן על יותר כסף קודם", outcomes:[ out("הם מכבדים את הבקשה ומשלמים יותר.",100,700,5), out("הם משתתקים ובוחרים במישהי אחרת.",0,0,-10) ] },
         { label:"לסרב, זה לא אותנטי לך", outcomes:[ out("הקהל שלך מכבד את היושרה.",200,0,15), out("כלום לא משתנה, אבל את מרגישה טוב עם זה.",0,0,10) ] }
       ]},
-      { prompt:"טרנד ריקוד חדש הופך לויראלי. כולן עושות אותו.", options:[
+      { prompt:"טרנד ריקוד חדש הופך לויראלי. כולן עושות אותו.", gaugeReveal:true, options:[
         { label:"לקפוץ על זה מיד", outcomes:[ out("את תופסת את הגל בגדול — חשיפה ענקית.",1000,0,-5), out("הגעת קצת מאוחר, תנועה צנועה בלבד.",200,0,-5) ] },
         { label:"לתת לזה טוויסט אישי משלך", outcomes:[ out("הגרסה שלך בולטת ומשותפת בכל מקום.",900,50,15), out("זו התנסות כיפית אבל היא לא באמת מצליחה.",200,0,5) ] },
         { label:"לדלג, זה לא הסטייל שלך", outcomes:[ out("להישאר נאמנה למותג שלך מרגיש נכון, צמיחה שקטה נמשכת.",100,0,10), out("את מרגישה קצת בלתי נראית השבוע.",-100,0,-5) ] }
@@ -376,7 +386,7 @@
         { label:"לנהל משא ומתן על תקופת בלעדיות קצרה יותר", outcomes:[ out("הם מסכימים — הכי טוב משני העולמות.",300,1200,15), out("הם מוותרים, העסקה בוטלה.",0,0,-5) ] },
         { label:"לסרב, החופש שלך חשוב לך", outcomes:[ out("מותגים אחרים שמים לב לעצמאות שלך ופונים אלייך.",500,300,15), out("את תוהה אם עשית את הבחירה הנכונה, אבל מרגישה חופשייה.",0,0,10) ] }
       ]},
-      { prompt:"מזמינים אותך לדבר בפאנל בכנס יוצרות — בלי תשלום, אבל עם חשיפה גבוהה.", options:[
+      { prompt:"מזמינים אותך לדבר בפאנל בכנס יוצרות — בלי תשלום, אבל עם חשיפה גבוהה.", gaugeReveal:true, options:[
         { label:"להסכים בשביל החשיפה", outcomes:[ out("את כובשת את הבמה — קטעים מסתובבים במשך שבועות.",800,0,10), out("זה עובר בסדר, אבל כלום לא ממש יוצא מזה.",200,0,0) ] },
         { label:"לנהל משא ומתן על שכר דיבור קודם", outcomes:[ out("הם מסכימים לשלם לך — כבוד והכנסה יחד.",500,600,10), out("הם לא יכולים לשלם ובוחרים במישהי אחרת.",0,0,-5) ] },
         { label:"לסרב, לא שווה את הנסיעה", outcomes:[ out("את מפנה את האנרגיה שלך למקום אחר וזה משתלם בשקט.",200,0,15), out("את שומעת שזה יצא נהדר ותוהה אם היית צריכה ללכת.",0,0,-5) ] }
@@ -456,8 +466,6 @@
     return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   }
 
-  const OUTCOME_REVEAL_STEPS = [90,120,160,220,280];
-
   function animateValue(el, from, to, duration, formatter, onDone){
     if (!el) return;
     if (from === to || prefersReducedMotion()){
@@ -489,30 +497,14 @@
     animateValue(el, from, to, 2000, formatter, () => { if (wrap) wrap.classList.remove("counting"); });
   }
 
-  function revealOutcome(textEl, deltasEl, candidateTexts, finalText, reduceMotion, onSettle){
+  function revealOutcome(textEl, finalText, reduceMotion, onSettle){
     if (!textEl) return;
-    if (reduceMotion || candidateTexts.length < 2){
-      textEl.textContent = finalText;
+    textEl.textContent = finalText;
+    if (reduceMotion){
       if (onSettle) onSettle();
       return;
     }
-    if (deltasEl) deltasEl.classList.add("revealing");
-    const steps = OUTCOME_REVEAL_STEPS;
-    let cumulative = 0;
-    textEl.textContent = candidateTexts[0];
-    steps.forEach((gap, idx) => {
-      cumulative += gap;
-      setTimeout(() => {
-        textEl.textContent = candidateTexts[(idx + 1) % candidateTexts.length];
-      }, cumulative);
-    });
-    setTimeout(() => {
-      textEl.textContent = finalText;
-      textEl.classList.add("settle-pop");
-      if (deltasEl) deltasEl.classList.remove("revealing");
-      setTimeout(() => textEl.classList.remove("settle-pop"), 400);
-      if (onSettle) onSettle();
-    }, cumulative + 120);
+    setTimeout(() => { if (onSettle) onSettle(); }, 350);
   }
 
   function isEligible(scenario){
@@ -538,6 +530,7 @@
     if (state.screen === "landing") return renderLanding();
     if (state.screen === "create") return renderCreate();
     if (state.screen === "scenario") return renderScenario();
+    if (state.screen === "gauge") return renderGauge();
     if (state.screen === "outcome") return renderOutcome();
     if (state.screen === "milestone") return renderMilestone();
     if (state.screen === "summary") return renderSummary();
@@ -719,7 +712,11 @@
       state.pendingMilestone = crossed;
     }
 
-    state.screen = "outcome";
+    if (state.scenario.gaugeReveal && !prefersReducedMotion()){
+      state.screen = "gauge";
+    } else {
+      state.screen = "outcome";
+    }
     render();
   }
 
@@ -735,6 +732,55 @@
       else shown = `${sign}${abs.toLocaleString()}`;
     }
     return `<div class="delta">${icon}<span>${shown}</span></div>`;
+  }
+
+  function renderGauge(){
+    app.innerHTML = `
+      ${statHeader(state.statsBefore)}
+      <div class="content">
+        ${progressBar()}
+        <div class="eyebrow">בחרת</div>
+        <div class="prompt-card" style="padding:16px 18px;"><h2 style="font-size:16px;">${escapeHtml(state.chosenOption.label)}</h2></div>
+      </div>
+      <div class="backdrop" id="gauge-backdrop"></div>
+      <div class="sheet gauge-card" id="gauge-sheet">
+        <div class="eyebrow">הפוסט שלך יוצא לעולם…</div>
+        <div class="gauge-likes" id="gauge-likes">0</div>
+        <div class="gauge-likes-label">לייקים</div>
+        <div class="gauge-track"><div class="gauge-needle" id="gauge-needle"></div></div>
+        <div class="gauge-labels"><span>💔 פלופ</span><span>🔥 וויראלי</span></div>
+      </div>`;
+
+    requestAnimationFrame(() => {
+      const backdropEl = document.getElementById("gauge-backdrop");
+      const sheetEl = document.getElementById("gauge-sheet");
+      if (backdropEl) backdropEl.classList.add("open");
+      if (sheetEl) sheetEl.classList.add("open");
+    });
+
+    const isGood = state.outcome === state.chosenOption.outcomes[0];
+    const needleEl = document.getElementById("gauge-needle");
+    const likesEl = document.getElementById("gauge-likes");
+    const finalPos = isGood ? 85 : 15;
+    const finalLikes = isGood ? (800 + Math.floor(Math.random() * 4200)) : (15 + Math.floor(Math.random() * 180));
+
+    const steps = [
+      { pos: 60, delay: 120 }, { pos: 30, delay: 140 }, { pos: 70, delay: 160 },
+      { pos: 25, delay: 190 }, { pos: finalPos, delay: 260 }
+    ];
+    let cumulative = 0;
+    steps.forEach(step => {
+      cumulative += step.delay;
+      setTimeout(() => {
+        if (needleEl) needleEl.style.left = step.pos + "%";
+        if (likesEl) likesEl.textContent = (step.pos === finalPos ? finalLikes : Math.floor(Math.random() * 5000)).toLocaleString();
+      }, cumulative);
+    });
+
+    setTimeout(() => {
+      state.screen = "outcome";
+      render();
+    }, cumulative + 300);
   }
 
   function renderOutcome(){
@@ -770,8 +816,6 @@
 
     const reduceMotion = prefersReducedMotion();
     const textEl = document.getElementById("outcome-text");
-    const deltasEl = document.getElementById("deltas-wrap");
-    const candidateTexts = state.chosenOption.outcomes.map(o => o.text);
 
     function runStatAnimation(){
       if (!state.statsBefore) return;
@@ -780,7 +824,7 @@
       animateStat("wellbeing", state.statsBefore.wellbeing, state.stats.wellbeing, v => `${v}%`);
     }
 
-    revealOutcome(textEl, deltasEl, candidateTexts, state.outcome.text, reduceMotion, runStatAnimation);
+    revealOutcome(textEl, state.outcome.text, reduceMotion, runStatAnimation);
   }
 
   function continueGame(){
