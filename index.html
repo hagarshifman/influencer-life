@@ -215,6 +215,7 @@
   .gauge-labels{ display:flex; justify-content:space-between; font-size:12.5px; color:var(--text-muted); font-weight:700; }
   .gauge-likes{ font-family:"Rubik"; font-size:34px; font-weight:700; margin:14px 0 2px; font-variant-numeric:tabular-nums; }
   .gauge-likes-label{ font-size:12.5px; color:var(--text-muted); font-weight:700; text-transform:uppercase; letter-spacing:.03em; }
+  .gauge-divider{ height:1px; background:var(--border); margin:4px 0; }
 
   .backdrop{
     position:absolute; inset:0; background:rgba(10,6,10,.5);
@@ -778,9 +779,34 @@
     });
 
     setTimeout(() => {
-      state.screen = "outcome";
-      render();
+      revealGaugeOutcome();
     }, cumulative + 650);
+  }
+
+  function revealGaugeOutcome(){
+    const sheetEl = document.getElementById("gauge-sheet");
+    if (!sheetEl) return;
+    const e = state.outcome.effects;
+    const isLast = state.levelIndex === LEVELS.length - 1 && state.scenarioInLevel === SCENARIOS_PER_LEVEL - 1;
+    sheetEl.insertAdjacentHTML("beforeend", `
+      <div class="gauge-divider"></div>
+      <div class="outcome-banner">
+        <p id="outcome-text">${escapeHtml(state.outcome.text)}</p>
+      </div>
+      <div class="deltas" id="deltas-wrap">
+        ${deltaChip(ICONS.followers, e.followers, "count")}
+        ${deltaChip(ICONS.money, e.money, "money")}
+        ${deltaChip(ICONS.wellbeing, e.wellbeing, "percent")}
+      </div>
+      <button class="btn-primary" id="continue-btn">${isLast ? "לצפייה בסיכום הקריירה" : "להמשיך"}</button>
+    `);
+    document.getElementById("continue-btn").addEventListener("click", continueGame);
+
+    if (state.statsBefore){
+      animateStat("followers", state.statsBefore.followers, state.stats.followers, v => formatCompact(v));
+      animateStat("money", state.statsBefore.money, state.stats.money, v => `${formatCompact(v)} ₪`);
+      animateStat("wellbeing", state.statsBefore.wellbeing, state.stats.wellbeing, v => `${v}%`);
+    }
   }
 
   function renderOutcome(){
