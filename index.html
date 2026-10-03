@@ -204,13 +204,13 @@
   .gauge-card{ text-align:center; }
   .gauge-track{
     position:relative; height:14px; border-radius:999px; margin:18px 0 10px;
-    background:linear-gradient(90deg, #E24B5B, #E2C14B 50%, #3FB37F);
+    background:linear-gradient(90deg, var(--border), var(--money) 50%, var(--wellbeing));
   }
   .gauge-needle{
     position:absolute; top:-5px; width:4px; height:24px; border-radius:2px;
     background:var(--text); box-shadow:0 0 0 3px var(--surface);
     left:50%; transform:translateX(-50%);
-    transition:left .22s cubic-bezier(.3,0,.2,1);
+    transition:left .45s cubic-bezier(.3,0,.2,1);
   }
   .gauge-labels{ display:flex; justify-content:space-between; font-size:12.5px; color:var(--text-muted); font-weight:700; }
   .gauge-likes{ font-family:"Rubik"; font-size:34px; font-weight:700; margin:14px 0 2px; font-variant-numeric:tabular-nums; }
@@ -765,8 +765,8 @@
     const finalLikes = isGood ? (800 + Math.floor(Math.random() * 4200)) : (15 + Math.floor(Math.random() * 180));
 
     const steps = [
-      { pos: 60, delay: 120 }, { pos: 30, delay: 140 }, { pos: 70, delay: 160 },
-      { pos: 25, delay: 190 }, { pos: finalPos, delay: 260 }
+      { pos: 65, delay: 320 }, { pos: 25, delay: 360 }, { pos: 75, delay: 400 },
+      { pos: 20, delay: 460 }, { pos: finalPos, delay: 560 }
     ];
     let cumulative = 0;
     steps.forEach(step => {
@@ -780,7 +780,7 @@
     setTimeout(() => {
       state.screen = "outcome";
       render();
-    }, cumulative + 300);
+    }, cumulative + 650);
   }
 
   function renderOutcome(){
